@@ -1,0 +1,514 @@
+<!DOCTYPE HTML>
+<!--
+	Astral by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Skylar and Malyn Can Code</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Wrapper-->
+			<div id="wrapper">
+
+				<!-- Nav -->
+					<nav id="nav">
+						<a href="#me" class="icon fa-home active"><span>Home</span></a>
+						<a href="#work" class="icon fa-folder"><span>Work</span></a>
+						<a href="#contact" class="icon fa-envelope"><span>Contact</span></a>
+						<!--<a href="#" class="icon fa-twitter"><span>Twitter</span></a>-->
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Me -->
+							<article id="me" class="panel">
+								<header>
+									<h1>Chemistry Rules</h1>
+									<p>Subtext file explanation here instructions yay!</p>
+								</header>
+								<a href="#work" class="jumplink pic">
+									<span class="arrow icon fa-chevron-right"><span>run the code</span></span>
+									<!--<img src="images/me.jpg" alt="" />-->
+								</a>
+							</article>
+
+						<!-- Work -->
+							<article id="work" class="panel">
+								<header>
+									<h2>Work</h2>
+								</header>
+								<p>
+									This is where user input box and instructions should go
+								</p>
+								<canvas id="drawwything" width="1000" height="250"></canvas>
+								<form action="">
+									Enter a compound: <input type="text" name="vuluu" value="magic" id="pumpkin"><br>
+								</form>
+								<button onClick="whatever()">Submit</button>
+								<script>
+								alert("yaaaay")
+								var nexx = 60
+								var nexy = 60
+								var parentChain = 0
+								var compound = ""
+								var nameList = ["meth", "eth", "prop", "but", "pent", "hex", "hept", "oct", "non", "dec", "undec", "dodec", "tridec", "tetradec", "pentadec"];
+								var number = ["0","1","2","3","4","5","6","7","8","9"];
+								var prefixList = ["di", "tri", "tetra"];
+								function parseParentChain(){
+									for(var i = nameList.length-1; i>=0; i--){
+										if(compound.includes(nameList[i])){
+											//alert("found name: " + nameList[i]);
+											parentChain = i + 1;
+											break;
+										}
+									}
+									//alert("parentChain: " + parentChain);
+									return parentChain;
+								}
+								
+								//function isDigit(char character){
+									//for(i = 0; i<number.length; i++){
+										//if(character == number[i]){
+											//return true;
+										//}
+									//}
+									//return false;
+								//}
+								function parseSubstituents(ctx){
+									//alert("parseSubstituents");
+									var start=0;
+									var carbonNum = 0;
+									var sublen = 0;
+									var preList = [];
+									var numList = [];
+									for(var i=start; i < compound.length-1; i++){
+										//alert(1);
+										if ((compound.charAt(i))=="y" && (compound.charAt(i+1))=="l"){
+											//alert(2)
+											var smallGo = compound.substring(start,i);
+											/*var prefix = 0
+											for(var q = 0; q<prefixList.length; q++){
+												if(smallGo.includes(prefixList[q])){
+													alert("found name: " + prefixList[q]);
+													prefix = q + 1
+													break;
+												}
+											}*/
+											
+											/*for(var j = 1; j < smallGo.length; j++){
+												alert(3);
+												if ((smallGo.charAt(j))=="-"){
+													alert(4);
+													if (j-2>=0 && ((smallGo.charAt(j-2))!="-")){
+														alert(5);
+														carbonNum = parseInt(smallGo.substr(j-2,j-1));
+													}
+													else{
+														alert(6);
+														carbonNum = parseInt(smallGo.charAt(j-1));
+													}
+												}
+											}*/
+											var smallerGo = smallGo.substring(0,smallGo.indexOf("-"));
+											var carbonNums = smallerGo.split(",");
+											//alert("Carbonnum: " + carbonNum + ", smallGo: " + smallGo);
+											for(var k = nameList.length-1; k>=0; k--){
+												if(smallGo.includes(nameList[k])){
+													sublen = k + 1;
+													break;
+												}
+											}
+											preList.push(sublen);
+											numList.push(carbonNums);
+											//alert("jhkjhjkhkjh");
+											//drawSubstituent(carbonNum, ctx);
+											start = i+2;
+										}
+									}
+									/*var count = 0;
+									for(var i = 1; i<=parentChain; i++){
+										for(var q = 0; q<numList.length; q++){
+											var first = numList[q].indexOf(i);
+											var last = numList[q].lastIndexOf(i);
+											var diff = last - first + 1;
+											count += diff
+										}
+									}*/
+									for(var i = 1; i<=parentChain; i++){
+										carbonList =[];
+										for(var q = 0; q<compound.length; q++){
+											if(compound.charAt(q)==String(i)){
+												var tempString = compound.substring(q,compound.length);
+												var permaString = tempString.substring(0,tempString.indexOf("yl"));
+												for(var d = 0; d<nameList.length; d++){
+													if(permaString.includes(nameList[d])){
+														if(d==1 && permaString.includes("meth"))
+															continue;
+														//alert(nameList[d]);
+														carbonList.push(d + 1);
+													}
+												}
+											}
+										}
+										//SLIGHT ADJUSTMENT BY SKYLAR
+										//alert(i+ " " + carbonList);
+										drawSubstituent(i,carbonList, ctx);
+									}
+									return carbonNum;
+								}
+								/*function parsePostScript(){
+									//looking to see if yne ore ene is present so we can check for dashes and numbers in between them  
+								}*/
+								function whatever(){
+									compound = document.getElementById("pumpkin").value;
+									nexx = 160;
+									nexy = 160;
+									var num = document.getElementById("pumpkin").value;
+									nummy = parseParentChain(num);
+									//alert("nummy is: " + nummy);
+									var canvas = document.getElementById("drawwything");
+									var ctx = canvas.getContext("2d");
+									ctx.fillStyle = "#FFFFFF";
+									ctx.fillRect(0,0,canvas.width, canvas.height);
+									ctx.fillStyle = "#34FF34";
+									ctx.fillText(num, 30, 10);
+									ctx.beginPath()
+									ctx.moveTo(nexx,nexy);
+									for(var i = 1; i<(nummy); i++){
+										if(i%2==1){
+											addOne(nexx,nexy,true,ctx);
+											}
+										else{
+											addOne(nexx,nexy,false,ctx);
+											}
+										}
+									ctx.stroke();
+									//alert("plz let this show up");
+									parseSubstituents(ctx);
+									//alert("yay?")
+									ctx.stroke();
+								}
+								function addOne(x,y, up, ctx){
+									//alert("drawing an addone: " + up);
+									if(up){
+										ctx.lineTo(x+30, y-30)
+										nexy = y-30
+										nexx = x+30
+									}
+									else{
+										ctx.lineTo(x+30, y+30);
+										nexy = y+30
+										nexx = x+30
+										}
+									ctx.stroke();
+								} 
+								function drawSubstituent(i, carbonList, ctx){
+									//alert("Draw Substituent " + carbonList);
+									ctx.fillStyle = "#000000";
+									//SLIGHT ADJUSTMENT BY SKYLAR
+									var xCo = 160 + (30*(i-1));
+									var xstart = xCo;
+									var ystart = 130;
+									var yCo = 100;
+									if(i%2!=0){
+										//going down! (means it isn't going up!)
+										yCo = 190;
+										ystart = 160
+									}
+									if(carbonList.length==1){
+										//alert("one sprout");
+										//we only have one sprout D;
+										ctx.moveTo(xCo, ystart);
+										ctx.lineTo(xCo,yCo);
+										ctx.stroke();
+										alert("it's about to draw a fragment");
+										drawFragments(i, "center", carbonList[0], xstart, ystart, xCo, yCo, ctx);
+									}
+									else if(carbonList.length==2){
+										//alert("two sprouts");
+										//we have two sprouts! :D
+										var xCo1 = xCo - 20;
+										var xCo2 = xCo + 20;
+										//left segment
+										ctx.moveTo(xCo, ystart);
+										ctx.lineTo(xCo1, yCo);
+										ctx.stroke();
+										drawFragments(i, "left", carbonList[0], xstart, ystart, xCo1, yCo, ctx);
+										ctx.moveTo(xCo, ystart);
+										ctx.lineTo(xCo2, yCo);
+										ctx.stroke();
+										drawFragments(i, "right", carbonList[1], xstart, ystart, xCo2, yCo, ctx);
+									}
+									//alert(7);
+									//alert(8);
+									ctx.stroke();
+									return [xCo,yCo];
+								}
+								/*function doodle(oldX,oldY,newX,newY,ctx){
+								ctx.fillText("tried to draw", 50, 20);
+								ctx.moveTo(oldX,oldY);
+								ctx.lineTo(newX, newY);
+								ctx.stroke();
+								}
+								function doodle2(startX, startY, endX, endY, isGoingRight){
+									var angle = 0;
+									var goingDown = false;
+									if(endX>startX && startY>endY){//up and to the right
+										if(isGoingRight){
+												angle = 180 - Math.atan((startY-endY),(endX-startX));
+												if(angle>120){
+													goingDown = true;
+												}	
+										}
+										else{
+											angle = Math.atan((startY-endY),(endX-startX));
+										}
+									}
+									else if(endX>startX && startY>endY){
+										alert("HERE");
+										}//COME BACK TTOH THIS
+								}*/
+								function drawFragments(carbonNumber, lrc, prefixNum, ogX, ogY, x, y, ctx){
+									ctx.fillStyle = "#000000";
+									var whichWay = true;
+									alert("drawFragments");
+									var newX = x;
+									var newY = y;
+									var oldX = ogX;
+									var oldY = ogY;
+									var angle = 0;
+									if(carbonNumber%2==0){
+										//alert("heyyyyyyyy carbonnumber%2==0");
+										//switch case here for the up value
+										//WE NEED TO STICK ALL THIS IN A FOR LOOOOOP!!!!!! to accout for substiuents longer than ethyl should be able to continue this angle and length pattern though
+										switch(lrc){
+											case "left":
+												alert("drawing left" + prefixNum);
+												var q = 50;
+												for(var i = 1; i<prefixNum; i++){
+													//alert("heyyyooooo");
+													if (whichWay){
+														//alert("whichway");
+														angle = (2*Math.PI/3) - Math.atan((oldY-newY), (newX-oldX));
+														//doodle(oldX,oldY,newX,newY,ctx);
+														oldX = newX;
+														oldY = newY;
+														newX = oldX + Math.round(36.06*(Math.cos(angle)));
+														newY = oldY - Math.round(36.06*(Math.sin(angle)));
+														whichWay = false;
+													}
+													else{
+														//alert("whichway");
+														angle = (2*Math.PI/3) - Math.atan((oldY-newY), (newX-oldX));
+														oldX = newX;
+														oldY = newY;
+														newX = oldX - Math.round(36.06*(Math.cos(angle)));
+														newY = oldY - Math.round(36.06*(Math.sin(angle)));
+														whichWay = true;
+													}
+													//alert("hello");
+													ctx.fillText("tried to draw", 50, 20);
+													ctx.moveTo(oldX,oldY);
+													ctx.lineTo(newX, newY);
+													ctx.fillText(angle + ", old: " + oldX +", " + oldY + ", new: " + newX + ", " +newY, 50, q);
+													q = q + 30;
+													ctx.stroke();
+												}
+												break;
+											case "right":
+												var q = 50;
+												for(var i = 1; i<prefixNum; i++){
+													//alert("heyyyooooo");
+													if (whichWay){
+														//alert("whichway");
+														angle = (2*Math.PI/3) - Math.atan((oldY-newY), (newX-oldX));
+														//doodle(oldX,oldY,newX,newY,ctx);
+														oldX = newX;
+														oldY = newY;
+														newX = oldX + Math.round(36.06*(Math.cos(angle)));
+														newY = oldY - Math.round(36.06*(Math.sin(angle)));
+														whichWay = false;
+													}
+													else{
+														//alert("whichway");
+														angle = (2*Math.PI/3) - Math.atan((oldY-newY), (newX-oldX));
+														oldX = newX;
+														oldY = newY;
+														newX = oldX - Math.round(36.06*Math.cos(angle));
+														newY = oldY - Math.round(36.06*Math.sin(angle));
+														whichWay = true;
+													}
+													//alert("hello");
+													ctx.fillText("tried to draw", 50, 20);
+													ctx.moveTo(oldX,oldY);
+													ctx.lineTo(newX, newY);
+													ctx.fillText(angle + ", old: " + oldX +", " + oldY + ", new: " + newX + ", " +newY, 50, q);
+													q = q + 30;
+													ctx.stroke();
+												}
+												break;
+											default:
+												for(var i = 1; i<prefixNum; i++){
+													if (whichWay){
+														newX = x + Math.round(36.06*Math.cos(30));
+														newY = y - Math.round(36.06*Math.sin(30));
+														whichWay = false;
+													}
+													else{
+														newX = x - Math.round(36.06*Math.cos(30));
+														newY = y - Math.round(36.06*Math.sin(30));
+														whichWay = true;
+													}
+													alert("hello");
+													ctx.fillText("tried to draw 3", 50, 20);
+													ctx.moveTo(x,y);
+													ctx.lineTo(newX, newY);
+													ctx.stroke();
+												}
+												break;
+											
+											}
+										}
+									else{
+										//switch case here for the down value
+										switch(lrc){
+											case "left":
+											for(var i = 1; i<prefixNum; i++){
+												if (whichWay){
+													newX = x + Math.round(36.06*Math.cos(30));
+													newY = y - Math.round(36.06*Math.sin(30));
+													whichWay = false;
+												}
+												else{
+													newX = x - Math.round(36.06*Math.cos(30));
+													newY = y - Math.round(36.06*Math.sin(30));
+													whichWay = true;
+												}
+												alert("hello");
+												ctx.fillText("tried to draw 4", 50, 20);
+												ctx.moveTo(x,y);
+												ctx.lineTo(newX, newY);
+												ctx.stroke();
+											}
+												break;
+											case "right":
+											for(var i = 1; i<prefixNum; i++){
+												if (whichWay){
+													newX = x + Math.round(36.06*Math.cos(30));
+													newY = y - Math.round(36.06*Math.sin(30));
+													whichWay = false;
+												}
+												else{
+													newX = x - Math.round(36.06*Math.cos(30));
+													newY = y - Math.round(36.06*Math.sin(30));
+													whichWay = true;
+												}
+												alert("hello");
+												ctx.fillText("tried to draw 4", 50, 20);
+												ctx.moveTo(x,y);
+												ctx.lineTo(newX, newY);
+												ctx.stroke();
+											}
+												break;
+											default:
+											for(var i = 1; i<prefixNum; i++){
+												if (whichWay){
+													newX = x + Math.round(36.06*Math.cos(30));
+													newY = y - Math.round(36.06*Math.sin(30));
+													whichWay = false;
+												}
+												else{
+													newX = x - Math.round(36.06*Math.cos(30));
+													newY = y - Math.round(36.06*Math.sin(30));
+													whichWay = true;
+												}
+												alert("hello");
+												ctx.fillText("tried to draw 5", 50, 20);
+												ctx.moveTo(x,y);
+												ctx.lineTo(newX, newY);
+												ctx.stroke();
+											}
+												break;
+											}
+									}
+									//this would be for the left branch: this sample code should loop through to draw a zigzag with multiple segments
+									/*var whichWay = true;
+									for(var i = 1; i<prefixNum; i++){
+										if (whichWay){
+											newX = x + Math.round(36.06*cos(30));
+											newY = y - Math.round(36.06*sin(30));
+											whichWay = false;
+										}
+										else{
+											newX = x - Math.round(36.06*cos(30));
+											newY = y - Math.round(36.06*sin(30));
+											whichWay = true;
+										}
+									}*/
+									
+								}
+								</script>
+								<section>
+									<p> does this replace photos though. YESH. </p>
+								</section>
+							</article>
+
+						<!-- Contact -->
+							<article id="contact" class="panel">
+								<header>
+									<h2>Contact Me</h2>
+								</header>
+								<form action="#" method="post">
+									<div>
+										<div class="row">
+											<div class="6u 12u$(mobile)">
+												<input type="text" name="name" placeholder="Name" />
+											</div>
+											<div class="6u$ 12u$(mobile)">
+												<input type="text" name="email" placeholder="Email" />
+											</div>
+											<div class="12u$">
+												<input type="text" name="subject" placeholder="Subject" />
+											</div>
+											<div class="12u$">
+												<textarea name="message" placeholder="Message" rows="8"></textarea>
+											</div>
+											<div class="12u$">
+												<input type="submit" value="Send Message" />
+											</div>
+										</div>
+									</div>
+								</form>
+							</article>
+
+					</div>
+
+				<!-- Footer -->
+					<div id="footer">
+						<ul class="copyright">
+							<li>&copy; Compound Classy </li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						</ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/skel-viewport.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
