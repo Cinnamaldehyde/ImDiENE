@@ -50,413 +50,689 @@
 								<p>
 									This is where user input box and instructions should go
 								</p>
-								<canvas id="drawwything" width="1000" height="250"></canvas>
+								<canvas id="drawwything" width="700" height="400"></canvas>
 								<form action="">
 									Enter a compound: <input type="text" name="vuluu" value="magic" id="pumpkin"><br>
 								</form>
 								<button onClick="whatever()">Submit</button>
 								<script>
-								alert("yaaaay")
-								var nexx = 60
-								var nexy = 60
-								var parentChain = 0
-								var compound = ""
+								alert("yaaaay");
+								var canvas = document.getElementById("drawwything");
+								var ctx = canvas.getContext("2d");
+								var nexx = 60;
+								var nexy = 60;
+								var parentChain = 0;
+								var compound = "";
+								var parentChainX = [0];
+								var parentChainY = [0];
 								var nameList = ["meth", "eth", "prop", "but", "pent", "hex", "hept", "oct", "non", "dec", "undec", "dodec", "tridec", "tetradec", "pentadec"];
 								var number = ["0","1","2","3","4","5","6","7","8","9"];
-								var prefixList = ["di", "tri", "tetra"];
-								function parseParentChain(){
+								var centerpoint = [];
+								var fancysubs = ["bromo","chloro","iodo"];
+								var fancysymbols = ["Br","Cl","I"];
+								
+								function parseParentChain(){//returns the number of carbons in the parent chain
 									for(var i = nameList.length-1; i>=0; i--){
 										if(compound.includes(nameList[i])){
-											//alert("found name: " + nameList[i]);
 											parentChain = i + 1;
 											break;
 										}
 									}
-									//alert("parentChain: " + parentChain);
 									return parentChain;
 								}
 								
-								//function isDigit(char character){
-									//for(i = 0; i<number.length; i++){
-										//if(character == number[i]){
-											//return true;
-										//}
-									//}
-									//return false;
-								//}
-								function parseSubstituents(ctx){
-									//alert("parseSubstituents");
+								function parseSubstituents(){//loops through each carbon, for each carbon it draws the appropriate substituents using drawSubstituent
 									var start=0;
 									var carbonNum = 0;
 									var sublen = 0;
-									var preList = [];
-									var numList = [];
-									for(var i=start; i < compound.length-1; i++){
-										//alert(1);
-										if ((compound.charAt(i))=="y" && (compound.charAt(i+1))=="l"){
-											//alert(2)
-											var smallGo = compound.substring(start,i);
-											/*var prefix = 0
-											for(var q = 0; q<prefixList.length; q++){
-												if(smallGo.includes(prefixList[q])){
-													alert("found name: " + prefixList[q]);
-													prefix = q + 1
-													break;
-												}
-											}*/
-											
-											/*for(var j = 1; j < smallGo.length; j++){
-												alert(3);
-												if ((smallGo.charAt(j))=="-"){
-													alert(4);
-													if (j-2>=0 && ((smallGo.charAt(j-2))!="-")){
-														alert(5);
-														carbonNum = parseInt(smallGo.substr(j-2,j-1));
-													}
-													else{
-														alert(6);
-														carbonNum = parseInt(smallGo.charAt(j-1));
-													}
-												}
-											}*/
-											var smallerGo = smallGo.substring(0,smallGo.indexOf("-"));
-											var carbonNums = smallerGo.split(",");
-											//alert("Carbonnum: " + carbonNum + ", smallGo: " + smallGo);
-											for(var k = nameList.length-1; k>=0; k--){
-												if(smallGo.includes(nameList[k])){
-													sublen = k + 1;
-													break;
-												}
-											}
-											preList.push(sublen);
-											numList.push(carbonNums);
-											//alert("jhkjhjkhkjh");
-											//drawSubstituent(carbonNum, ctx);
-											start = i+2;
-										}
-									}
-									/*var count = 0;
-									for(var i = 1; i<=parentChain; i++){
-										for(var q = 0; q<numList.length; q++){
-											var first = numList[q].indexOf(i);
-											var last = numList[q].lastIndexOf(i);
-											var diff = last - first + 1;
-											count += diff
-										}
-									}*/
 									for(var i = 1; i<=parentChain; i++){
 										carbonList =[];
 										for(var q = 0; q<compound.length; q++){
 											if(compound.charAt(q)==String(i)){
 												var tempString = compound.substring(q,compound.length);
 												var permaString = tempString.substring(0,tempString.indexOf("yl"));
+												var permaStringSub = tempString.substring(0,tempString.indexOf("o-"));
+												alert(permaString);
+												alert(permaStingSub);
 												for(var d = 0; d<nameList.length; d++){
-													if(permaString.includes(nameList[d])){
+													if(permaString.includes(nameList[d]) || permaStringSub.AAAHHHHHHHHHH){
 														if(d==1 && permaString.includes("meth"))
 															continue;
-														//alert(nameList[d]);
 														carbonList.push(d + 1);
 													}
 												}
 											}
 										}
-										//SLIGHT ADJUSTMENT BY SKYLAR
-										//alert(i+ " " + carbonList);
+										alert("carbon list: " + carbonList);
 										drawSubstituent(i,carbonList, ctx);
 									}
 									return carbonNum;
 								}
-								/*function parsePostScript(){
+								
+								function parsePostScript(){
+									var num = 0;
+									if (compound.includes("yne") || compound.includes("ene")){
+										var compy = compound.substring(0,compound.lastIndexOf("-"));
+										var compy2 = compy.substring(compy.lastIndexOf("-")+1,compy.length);
+										//alert("compy and compy2: " + compy + ", " + compy2);
+										num = parseInt(compy2); //parseInt
+									}
+									if(compound.includes("yne")){
+										drawYne(num,ctx);
+									}
+									else if(compound.includes("ene")){
+										drawEne(num,ctx);
+									} 
 									//looking to see if yne ore ene is present so we can check for dashes and numbers in between them  
-								}*/
-								function whatever(){
+								}
+
+								function drawEne(){
+									var num = 0;
+									if (!compound.includes("ene") && !compound.includes("en-")){
+										return false;
+									}
+									var compy = compound.substring(0,compound.lastIndexOf("-"));
+									if (compy.includes("en-"))
+									{
+										compy = compy.substring(0,compy.indexOf("en-"));
+										//alert("doobydobyydooby " + compy);
+										compy = compy.substring(0,compy.lastIndexOf("-"));
+										//alert(compy);
+									}
+									if(compy.includes("-")){
+										compy = compy.substring(compy.lastIndexOf("-")+1,compy.length);
+									}
+									//var compy2 = compy.substring(compy.lastIndexOf("-")+1,compy.length);
+									var listyNum = compy.split(",");
+									alert(listyNum);
+									//alert("compy and compy2: " + compy + ", " + compy2);
+									//num = parseInt(compy2); //parseInt
+									for(var i = 0; i<listyNum.length;i++){
+										num = parseInt(listyNum[i]);
+										//alert("OHSKDFAL");
+										if(listyNum[i]=="")
+											num = 1;
+										//alert("DRAWENE: " + compy2 + num);
+										var adjust = 5;
+										var listyA = whereIsCarbon(num);
+										var	listyB = whereIsCarbon(num+1);
+										if (compound.includes("cyclo")){
+											//var dirList = segmentPoints(num);
+											var diffX = listyB[0] - listyA[0];
+											var diffY = listyA[1] - listyB[1];
+											//alert("heyyyyyyyyyyyyyy");
+											var heyangle = Math.atan(Math.abs(diffY/diffX));
+											//alert("heyangle: " + 180*heyangle/Math.PI);
+											var lengthy = 5*Math.sqrt(2);
+											var midX = (listyA[0]+listyB[0])/2;
+											var midY = (listyA[1]+listyB[1])/2;
+											var isRight = 0;
+											var isDown = 0;
+											if (diffY>0)
+												isRight = 1;
+											else if (diffY<0)
+												isRight = -1;
+											if (diffX>0)
+												isDown = 1;
+											else if (diffX<0)
+												isDown = -1;
+											var newmidX = midX + isRight*lengthy*Math.sin(heyangle); //the midpoint of the "ene" line
+											var newmidY = midY + isDown*lengthy*Math.cos(heyangle); //the midpoint of the "ene" line
+											if ((isRight*isDown) == 1)
+											{
+												isDown= 1;
+												isRight = -1;
+											}
+											//alert("heyyyyy");
+											//ctx.moveTo(newmidX, newmidY);
+											//ctx.lineTo(0,0);
+											var startX = newmidX - isDown * (diffX/42 * 16);
+											var endX = newmidX + isDown* (diffX/42 * 16);
+											var startY = newmidY - isRight * (diffY/42 *16);
+											var endY = newmidY + isRight * (diffY/42 * 16);
+											ctx.moveTo(startX,startY);
+											ctx.lineTo(endX,endY);
+											ctx.stroke();
+											//alert("yay a new line whooooot!");
+										}
+										else {
+											//alert("OkHkay");
+											var sox = listyA[0] + adjust; //number subject to change here!!
+											//soy is now just listyA[1] and sonewx is now just listyB[0]
+											var sonewy = 0;
+											if(num%2==1){ //odd aka up
+												sonewy = listyB[1] + adjust;
+											}
+											else if(num%2==0){ //odd aka up 
+												sonewy = listyB[1] - adjust;
+											}
+											//ctx.fillRect(0,0,80,80); <---just a random test square
+											//alert("[" + listyA + "], [" + listyB + "], " + num + ", " + sox + ", " + soy + ", " + sonewx + ", " + sonewy);
+											ctx.moveTo(sox,listyA[1]);
+											ctx.lineTo(listyB[0],sonewy);
+											//I checked and the code successfully reaches this point
+											ctx.stroke();
+										}
+									}
+									return true;
+								}
+								function drawYne(nummy){
+									if (!compound.includes("yne")){
+										return false;
+									}
+									var compy = compound.substring(0,compound.lastIndexOf("-"));
+									if(compy.includes("-")){
+										compy = compy.substring(compy.lastIndexOf("-")+1,compy.length);
+									}
+									//var compy2 = compy.substring(compy.lastIndexOf("-")+1,compy.length);
+									var listyNum = compy.split(",");
+									alert(listyNum);
+									
+									//alert("compy and compy2: " + compy + ", " + compy2);
+									for(var i = 0; i<listyNum.length; i++){
+										listyNum[i] = parseInt(listyNum[i]);
+									}
+									alert(listyNum);
+									var num = listyNum[0];
+									//alert("DRAWYNE");
+									//alert("unfinished LOL SORRY");
+									parentChainX.push(nexx);
+									parentChainY.push(nexy);
+									var numbster = 1;
+									for(var i = 1; i<(num - 1); i++){
+											if(i%2==1){
+												ctx.lineTo(nexx+30, nexy-30)
+												nexy = nexy-30;
+												nexx = nexx+30;
+												}
+											else{
+												ctx.lineTo(nexx+30, nexy+30);
+												nexy = nexy+30;
+												nexx = nexx+30;
+												}
+											parentChainX.push(nexx);
+											parentChainY.push(nexy);
+											ctx.stroke();
+										}
+										if((num+2)<(nummy)){ //if enough space to draw the entire flat part
+											for(var t=1;t<4;t++){ //runs 3 times
+												nexx+=42;
+												ctx.lineTo(nexx,nexy);
+												ctx.stroke();
+												parentChainX.push(nexx);
+												parentChainY.push(nexy);
+											}
+										}
+										else {
+										var diff= nummy-(num-1);
+										for (var w =0; w<diff; w++){
+											nexx+=42;
+											ctx.lineTo(nexx,nexy);
+											ctx.stroke();
+											parentChainX.push(nexx);
+											parentChainY.push(nexy);
+											ctx.fillText(nexx + " " + nexy, 200, 100 +10*w);
+										}
+										}
+										for (var j=(num+2); j<nummy; j++){
+											if(j%2==1){
+													ctx.lineTo(nexx+30, nexy-30)
+													nexy = nexy-30;
+													nexx = nexx+30;
+													}
+												else{
+													ctx.lineTo(nexx+30, nexy+30);
+													nexy = nexy+30;
+													nexx = nexx+30;
+													}
+												parentChainX.push(nexx);
+												parentChainY.push(nexy);
+												ctx.stroke();
+										}
+										
+										//alert("should we cry here or somewhere else?");
+										var spotX = parentChainX[num]+3;
+										var spotY = parentChainY[num];
+										ctx.moveTo(spotX,spotY-4);
+										ctx.lineTo(spotX+36,spotY-4);
+										//ctx.fillText(100,100,"heyyyy what color is this?");
+										ctx.stroke();
+										ctx.moveTo(spotX,spotY+4);
+										ctx.lineTo(spotX+36,spotY+4);
+										ctx.stroke();
+									return true;
+								}
+								function parseCyclo(numSides){
+									//ctx.fillText(
+									var angle = (numSides-2)*Math.PI/numSides;
+									ctx.moveTo(canvas.width/2,canvas.height/2);
+									parentChainX.push(canvas.width/2);
+									parentChainY.push(canvas.height/2);
+									ctx.lineTo((canvas.width/2)-42,canvas.height/2);
+									parentChainX.push((canvas.width/2)-42);
+									parentChainY.push(canvas.height/2);
+									ctx.stroke();
+									for (var i = 1; i < numSides; i++){
+										var listOAngles = segmentDirection(parentChainX[i],parentChainY[i],parentChainX[i+1],parentChainY[i+1],true,angle);
+										var spotX = parentChainX[i+1]+(42*listOAngles[1]*(Math.cos(listOAngles[2])));
+										var spotY = parentChainY[i+1]+(42*listOAngles[0]*(Math.sin(listOAngles[2])));
+										parentChainX.push(spotX);
+										parentChainY.push(spotY);
+										ctx.lineTo(spotX,spotY);
+										ctx.stroke();
+									}
+									//ctx.fillStyle("#24FF24");
+									ctx.fillText(parentChainX + ", " + parentChainY, canvas.width/2, canvas.height/2);
+								}
+								function whatever(){ //the horribly named runner method
+									//I'm just going to write this down before I forget it - what if we integrated something that 
+									//would figure out where the central node of the equation is and then puts that at the center
+									//of the canvas?? That would be neat. We'd have to go adjust a bunch of values. 
+									nexx = 60;
+									nexy = 60;
+									parentChain = 0;
+									compound = "";
+									parentChainX = [0];
+									parentChainY = [0];
 									compound = document.getElementById("pumpkin").value;
-									nexx = 160;
-									nexy = 160;
-									var num = document.getElementById("pumpkin").value;
-									nummy = parseParentChain(num);
-									//alert("nummy is: " + nummy);
-									var canvas = document.getElementById("drawwything");
-									var ctx = canvas.getContext("2d");
 									ctx.fillStyle = "#FFFFFF";
 									ctx.fillRect(0,0,canvas.width, canvas.height);
 									ctx.fillStyle = "#34FF34";
-									ctx.fillText(num, 30, 10);
+									ctx.fillText(compound, 30, 10);
+									nexx = 160;
+									nexy = 160;
+									nummy = parseParentChain(compound);
 									ctx.beginPath()
 									ctx.moveTo(nexx,nexy);
-									for(var i = 1; i<(nummy); i++){
-										if(i%2==1){
-											addOne(nexx,nexy,true,ctx);
+									var fancy = drawYne(nummy);
+									if(compound.includes("cyclo")){
+										//alert("cycleeee");
+										parseCyclo(nummy);
+										//alert("cyclooooop");
+										//fancy = true;
+									}
+									else if(!fancy){
+										//alert("hey hey hey hey");
+										parentChainX.push(nexx);
+										parentChainY.push(nexy);
+										for(var i = 1; i<(nummy); i++){
+											if(i%2==1){
+												ctx.lineTo(nexx+30, nexy-30)
+												nexy = nexy-30;
+												nexx = nexx+30;
+												}
+											else{
+												ctx.lineTo(nexx+30, nexy+30);
+												nexy = nexy+30;
+												nexx = nexx+30;
+												}
+											parentChainX.push(nexx);
+											parentChainY.push(nexy);
+											ctx.stroke();
 											}
-										else{
-											addOne(nexx,nexy,false,ctx);
-											}
-										}
-									ctx.stroke();
-									//alert("plz let this show up");
-									parseSubstituents(ctx);
-									//alert("yay?")
+										ctx.stroke();
+									}
+									centerpoint = findCenter();
+									//alert("hey hey hey");
+									//alert(parentChainX);
+									//alert(parentChainY);
+									drawEne(); //note - one way or another we will probably move this to before parent chain is drawn bc of drawYne
+									//alternatively, we could always get rid of parsePostScript and just call drawYne first and drawEne after (and add checks 
+									//to those methods
+									parseSubstituents();
 									ctx.stroke();
 								}
-								function addOne(x,y, up, ctx){
-									//alert("drawing an addone: " + up);
-									if(up){
-										ctx.lineTo(x+30, y-30)
-										nexy = y-30
-										nexx = x+30
+								
+								function whereIsCarbon(carbonNum) { //tells you the coordinates of the specified carbon
+									//should we delete this method? now that we already have a list with the components,
+									//whereIsCarbon(num)[0] can be replaced with parentChainX[num]
+									//whereIsCarbon(num)[1] can be replaced with parentChainY[num]
+									//(we'd have to change a couple things in drawEne but other than that we'd be gucci
+									return [parentChainX[carbonNum], parentChainY[carbonNum]];
+								}
+								
+								function drawSubstituent(i, carbonList){ //calls drawFragments once or twice and then calls drawFragments
+									ctx.fillStyle = "#000000";
+									var listy = whereIsCarbon(i);
+									var xCo = listy[0];
+									var xstart = xCo;
+									var ystart = listy[1];
+									//var yCo = 100;
+									var yCo = listy[1] - 30; //housekeeping
+									if(i%2!=0){ //going down! (means it isn't going up!)
+										yCo = listy[1] + 30; //housekeeping
+									}
+									if(compound.includes("cyclo")){
+										cycloSubstituent(i, carbonList);
 									}
 									else{
-										ctx.lineTo(x+30, y+30);
-										nexy = y+30
-										nexx = x+30
+										if(carbonList.length==1){ //we only have one sprout D;
+											ctx.moveTo(xstart, ystart);
+											ctx.lineTo(xCo,yCo);
+											ctx.stroke();
+											drawFragments(i, carbonList[0], xstart, ystart, xCo, yCo);
 										}
-									ctx.stroke();
-								} 
-								function drawSubstituent(i, carbonList, ctx){
-									//alert("Draw Substituent " + carbonList);
-									ctx.fillStyle = "#000000";
-									//SLIGHT ADJUSTMENT BY SKYLAR
-									var xCo = 160 + (30*(i-1));
-									var xstart = xCo;
-									var ystart = 130;
-									var yCo = 100;
-									if(i%2!=0){
-										//going down! (means it isn't going up!)
-										yCo = 190;
-										ystart = 160
-									}
-									if(carbonList.length==1){
-										//alert("one sprout");
-										//we only have one sprout D;
-										ctx.moveTo(xCo, ystart);
-										ctx.lineTo(xCo,yCo);
+										else if(carbonList.length==2){ //we have two sprouts! :D
+											var xCo1 = xCo - 20;
+											var xCo2 = xCo + 20;
+											//left segment
+											ctx.moveTo(xCo, ystart);
+											ctx.lineTo(xCo1, yCo);
+											ctx.stroke();
+											drawFragments(i, carbonList[0], xstart, ystart, xCo1, yCo);
+											//right segment
+											ctx.moveTo(xstart, ystart);
+											ctx.lineTo(xCo2, yCo);
+											ctx.stroke();
+											drawFragments(i, carbonList[1], xstart, ystart, xCo2, yCo);
+										}
 										ctx.stroke();
-										alert("it's about to draw a fragment");
-										drawFragments(i, "center", carbonList[0], xstart, ystart, xCo, yCo, ctx);
 									}
-									else if(carbonList.length==2){
-										//alert("two sprouts");
-										//we have two sprouts! :D
-										var xCo1 = xCo - 20;
-										var xCo2 = xCo + 20;
-										//left segment
-										ctx.moveTo(xCo, ystart);
-										ctx.lineTo(xCo1, yCo);
-										ctx.stroke();
-										drawFragments(i, "left", carbonList[0], xstart, ystart, xCo1, yCo, ctx);
-										ctx.moveTo(xCo, ystart);
-										ctx.lineTo(xCo2, yCo);
-										ctx.stroke();
-										drawFragments(i, "right", carbonList[1], xstart, ystart, xCo2, yCo, ctx);
-									}
-									//alert(7);
-									//alert(8);
-									ctx.stroke();
 									return [xCo,yCo];
 								}
-								/*function doodle(oldX,oldY,newX,newY,ctx){
-								ctx.fillText("tried to draw", 50, 20);
-								ctx.moveTo(oldX,oldY);
-								ctx.lineTo(newX, newY);
-								ctx.stroke();
-								}
-								function doodle2(startX, startY, endX, endY, isGoingRight){
-									var angle = 0;
-									var goingDown = false;
-									if(endX>startX && startY>endY){//up and to the right
-										if(isGoingRight){
-												angle = 180 - Math.atan((startY-endY),(endX-startX));
-												if(angle>120){
-													goingDown = true;
-												}	
+								
+								//NOTE ABOUT goingClockwise!!!! bc of the way the logic works clockwise is going right at the top but it's going to the left on the bottom
+								function segmentDirection(startX, startY, endX, endY, goingClockwise, theangle){//okay this method figures out what direction the new segment needs to go
+									var angle = Math.atan(Math.abs(startY-endY)/Math.abs(endX-startX));
+									var actualAngle = 0; //this is the angle that the program will use to draw the new line
+									var goingDown = 1; //if negative, it is going up
+									var goingRight = 1; // if negative, it is going left
+									if(endX==startX && startY>endY){//straight up
+										goingDown = -1;
+										if(goingClockwise){
+											goingRight = 1;
 										}
 										else{
-											angle = Math.atan((startY-endY),(endX-startX));
+											goingRight = -1;
+										}
+										actualAngle = theangle - Math.PI/2; //30 degrees
+									}
+									else if(endX==startX && startY<endY){//straight down
+										goingDown = 1;
+										if(goingClockwise){
+											goingRight = -1;
+										}
+										else{
+											goingRight = 1;
+										}
+										actualAngle = theangle - Math.PI/2;
+									}
+									else if(endX>startX && startY==endY){//straight to the right
+										goingRight = 1;
+										if(goingClockwise){
+											goingDown = 1;
+										}
+										else{
+											goingDown = -1;
+										}
+										actualAngle = Math.PI - theangle; //60 (180 - 120)
+									}
+									else if(endX<startX && startY==endY){//straight to the left
+										goingRight = -1;
+										if(goingClockwise){
+											goingDown = -1;
+										}
+										else{
+											goingDown = 1;
+										}
+										actualAngle = Math.PI - theangle;
+									}
+									else if(endX>startX && startY>endY){//up and to the right
+										if(goingClockwise){
+											goingRight = 1;
+											if(angle<(Math.PI - theangle)){
+												goingDown = 1;
+												actualAngle = Math.PI - theangle - angle;
+											}
+											else if(angle>(Math.PI - theangle)){
+												goingDown = -1;
+												actualAngle = angle + theangle - Math.PI;
+											}
+											else{
+												goingDown = 0; //going straight to the side
+												actualAngle = 0;
+											}
+										}
+										else{
+											goingDown = -1;
+											if(angle > (theangle - Math.PI)){
+												goingRight = -1;
+												actualAngle = theangle - angle;
+											}
+											else if(angle < (theangle - Math.PI)){
+												goingRight = 1;
+												actualAngle = Math.PI - theangle + angle;
+											}
+											else{
+												goingRight = 0; //going straight up
+												actualAngle = Math.PI/2;
+											}
 										}
 									}
-									else if(endX>startX && startY>endY){
-										alert("HERE");
-										}//COME BACK TTOH THIS
-								}*/
-								function drawFragments(carbonNumber, lrc, prefixNum, ogX, ogY, x, y, ctx){
+									else if(endX>startX && startY<endY){//down and to the right 
+										if(goingClockwise){
+											goingDown = 1;
+											if(angle>(theangle - Math.PI/2)){
+												goingRight = -1;
+												actualAngle = theangle - angle;
+											}
+											else if(angle<(theangle - Math.PI/2)){
+												goingRight = 1;
+												actualAngle = Math.PI - theangle + angle;
+											}
+											else{
+												goingRight = 0; //straight down
+												actualAngle = Math.PI/2;
+											}
+										}
+										else{
+											goingRight = 1;
+											if(angle<(Math.PI - theangle)){
+												goingDown = -1;
+												actualAngle = Math.PI - theangle - angle;
+											}
+											else if(angle>(Math.PI - theangle)){
+												goingDown = 1;
+												actualAngle = theangle + angle - Math.PI;
+											}
+											else{
+												goingDown = 0; //straight to the right
+												actualAngle = 0;
+											}
+										}	
+									}
+									else if(endX<startX && startY>endY){//up and to the left
+										if(goingClockwise){
+											goingDown = -1;
+											if(angle>(theangle - Math.PI/2)){
+												goingRight = 1;
+												actualAngle = theangle - angle;
+											}
+											else if(angle<(theangle - Math.PI/2)){
+												goingRight = -1;
+												actualAngle = Math.PI - theangle + angle;
+											}
+											else{
+												goingRight = 0; //going straight up
+												actualAngle = Math.PI/2;
+											}
+										}
+										else{
+											goingRight = -1;
+											if(angle<(Math.PI - theangle)){
+												goingDown = 1;
+												actualAngle = Math.PI - theangle - angle;
+											}
+											else if(angle>(Math.PI - theangle)){
+												goingDown = -1;
+												actualAngle = angle + theangle - Math.PI;
+											}
+											else{
+												goingDown = 0; //going straight to the left
+												actualAngle = 0;
+											}
+										}
+									}
+									else if(endX<startX && startY<endY){//down and to the left
+										if(goingClockwise){
+											goingRight = -1;
+											if(angle<(Math.PI - theangle)){
+												goingDown = -1;
+												actualAngle = Math.PI - theangle - angle;
+											}
+											else if(angle>(Math.PI - theangle)){
+												goingDown = 1;
+												actualAngle = theangle + angle - Math.PI
+											}
+											else{
+												goingDown = 0; 
+												actualAngle = 0;	
+											}
+										}
+										else{
+											goingDown = 1;
+											if(angle>(theangle - Math.PI/2)){
+												goingRight = 1;
+												actualAngle = theangle - angle;
+											}
+											else if(angle<(theangle - Math.PI/2)){
+												goingRight = -1;
+												actualAngle = angle + Math.PI - theangle;
+											}
+											else{
+												goingRight = 0;
+												actualAngle = Math.PI/2;
+											}
+										}
+									}
+									return [goingDown,goingRight, actualAngle];
+								}
+								
+								function drawFragments(carbonNumber, prefixNum, ogX, ogY, x, y){//draws substituents beyond methyl
 									ctx.fillStyle = "#000000";
 									var whichWay = true;
-									alert("drawFragments");
+									if(carbonNumber%2==1){
+										whichWay = false;
+									}
 									var newX = x;
 									var newY = y;
 									var oldX = ogX;
 									var oldY = ogY;
 									var angle = 0;
-									if(carbonNumber%2==0){
-										//alert("heyyyyyyyy carbonnumber%2==0");
-										//switch case here for the up value
-										//WE NEED TO STICK ALL THIS IN A FOR LOOOOOP!!!!!! to accout for substiuents longer than ethyl should be able to continue this angle and length pattern though
-										switch(lrc){
-											case "left":
-												alert("drawing left" + prefixNum);
-												var q = 50;
-												for(var i = 1; i<prefixNum; i++){
-													//alert("heyyyooooo");
-													if (whichWay){
-														//alert("whichway");
-														angle = (2*Math.PI/3) - Math.atan((oldY-newY), (newX-oldX));
-														//doodle(oldX,oldY,newX,newY,ctx);
-														oldX = newX;
-														oldY = newY;
-														newX = oldX + Math.round(36.06*(Math.cos(angle)));
-														newY = oldY - Math.round(36.06*(Math.sin(angle)));
-														whichWay = false;
-													}
-													else{
-														//alert("whichway");
-														angle = (2*Math.PI/3) - Math.atan((oldY-newY), (newX-oldX));
-														oldX = newX;
-														oldY = newY;
-														newX = oldX - Math.round(36.06*(Math.cos(angle)));
-														newY = oldY - Math.round(36.06*(Math.sin(angle)));
-														whichWay = true;
-													}
-													//alert("hello");
-													ctx.fillText("tried to draw", 50, 20);
-													ctx.moveTo(oldX,oldY);
-													ctx.lineTo(newX, newY);
-													ctx.fillText(angle + ", old: " + oldX +", " + oldY + ", new: " + newX + ", " +newY, 50, q);
-													q = q + 30;
-													ctx.stroke();
-												}
-												break;
-											case "right":
-												var q = 50;
-												for(var i = 1; i<prefixNum; i++){
-													//alert("heyyyooooo");
-													if (whichWay){
-														//alert("whichway");
-														angle = (2*Math.PI/3) - Math.atan((oldY-newY), (newX-oldX));
-														//doodle(oldX,oldY,newX,newY,ctx);
-														oldX = newX;
-														oldY = newY;
-														newX = oldX + Math.round(36.06*(Math.cos(angle)));
-														newY = oldY - Math.round(36.06*(Math.sin(angle)));
-														whichWay = false;
-													}
-													else{
-														//alert("whichway");
-														angle = (2*Math.PI/3) - Math.atan((oldY-newY), (newX-oldX));
-														oldX = newX;
-														oldY = newY;
-														newX = oldX - Math.round(36.06*Math.cos(angle));
-														newY = oldY - Math.round(36.06*Math.sin(angle));
-														whichWay = true;
-													}
-													//alert("hello");
-													ctx.fillText("tried to draw", 50, 20);
-													ctx.moveTo(oldX,oldY);
-													ctx.lineTo(newX, newY);
-													ctx.fillText(angle + ", old: " + oldX +", " + oldY + ", new: " + newX + ", " +newY, 50, q);
-													q = q + 30;
-													ctx.stroke();
-												}
-												break;
-											default:
-												for(var i = 1; i<prefixNum; i++){
-													if (whichWay){
-														newX = x + Math.round(36.06*Math.cos(30));
-														newY = y - Math.round(36.06*Math.sin(30));
-														whichWay = false;
-													}
-													else{
-														newX = x - Math.round(36.06*Math.cos(30));
-														newY = y - Math.round(36.06*Math.sin(30));
-														whichWay = true;
-													}
-													alert("hello");
-													ctx.fillText("tried to draw 3", 50, 20);
-													ctx.moveTo(x,y);
-													ctx.lineTo(newX, newY);
-													ctx.stroke();
-												}
-												break;
-											
-											}
-										}
-									else{
-										//switch case here for the down value
-										switch(lrc){
-											case "left":
-											for(var i = 1; i<prefixNum; i++){
-												if (whichWay){
-													newX = x + Math.round(36.06*Math.cos(30));
-													newY = y - Math.round(36.06*Math.sin(30));
-													whichWay = false;
-												}
-												else{
-													newX = x - Math.round(36.06*Math.cos(30));
-													newY = y - Math.round(36.06*Math.sin(30));
-													whichWay = true;
-												}
-												alert("hello");
-												ctx.fillText("tried to draw 4", 50, 20);
-												ctx.moveTo(x,y);
-												ctx.lineTo(newX, newY);
-												ctx.stroke();
-											}
-												break;
-											case "right":
-											for(var i = 1; i<prefixNum; i++){
-												if (whichWay){
-													newX = x + Math.round(36.06*Math.cos(30));
-													newY = y - Math.round(36.06*Math.sin(30));
-													whichWay = false;
-												}
-												else{
-													newX = x - Math.round(36.06*Math.cos(30));
-													newY = y - Math.round(36.06*Math.sin(30));
-													whichWay = true;
-												}
-												alert("hello");
-												ctx.fillText("tried to draw 4", 50, 20);
-												ctx.moveTo(x,y);
-												ctx.lineTo(newX, newY);
-												ctx.stroke();
-											}
-												break;
-											default:
-											for(var i = 1; i<prefixNum; i++){
-												if (whichWay){
-													newX = x + Math.round(36.06*Math.cos(30));
-													newY = y - Math.round(36.06*Math.sin(30));
-													whichWay = false;
-												}
-												else{
-													newX = x - Math.round(36.06*Math.cos(30));
-													newY = y - Math.round(36.06*Math.sin(30));
-													whichWay = true;
-												}
-												alert("hello");
-												ctx.fillText("tried to draw 5", 50, 20);
-												ctx.moveTo(x,y);
-												ctx.lineTo(newX, newY);
-												ctx.stroke();
-											}
-												break;
-											}
+									var currentValsList = [];
+									for(var i = 1; i < prefixNum; i++){
+										currentValsList = segmentDirection(oldX, oldY, newX, newY, whichWay, (2*Math.PI/3));
+										goingDown = currentValsList[0];
+										goingRight = currentValsList[1];
+										angle = currentValsList[2];
+										oldX = newX;
+										oldY = newY;
+										newX = oldX + goingRight*Math.round(36.06*(Math.cos(angle)));
+										newY = oldY + goingDown*Math.round(36.06*(Math.sin(angle)));
+										whichWay = !whichWay;
+										ctx.fillText("tried to draw", 50, 20);
+										ctx.moveTo(oldX,oldY);
+										ctx.lineTo(newX, newY);
+										ctx.stroke();
 									}
-									//this would be for the left branch: this sample code should loop through to draw a zigzag with multiple segments
-									/*var whichWay = true;
-									for(var i = 1; i<prefixNum; i++){
-										if (whichWay){
-											newX = x + Math.round(36.06*cos(30));
-											newY = y - Math.round(36.06*sin(30));
-											whichWay = false;
-										}
-										else{
-											newX = x - Math.round(36.06*cos(30));
-											newY = y - Math.round(36.06*sin(30));
-											whichWay = true;
-										}
-									}*/
-									
 								}
+								function findCenter(){
+									//alert("center of my cycloverse");
+									var maxX = 0;
+									var minX = 1000;
+									var maxY = 0;
+									var minY = 1000;
+									for (var i=1; i<parentChainX.length; i++){
+										if(parentChainX[i] > maxX)
+											maxX = parentChainX[i];
+										if(parentChainX[i] < minX)
+											minX = parentChainX[i];
+										if(parentChainY[i] > maxY)
+											maxY = parentChainY[i];
+										if(parentChainY[i] < minY)
+											minY = parentChainY[i];
+									}
+									return [(maxX+minX)/2,(maxY+minY)/2];
+								}
+								function cycloSubstituent(carbonNum, carbonList){
+									//alert("cyclosubstituent");
+									var compare1 = carbonNum-1;
+									var compare2 = carbonNum+1;
+									if(carbonNum == parentChain)
+										compare2 = 1;
+									if(carbonNum == 1)
+										compare1 = parentChain;
+									var pointXTER = parentChainX[compare1];
+									var pointY = parentChainY[compare1];
+									var pointNX = parentChainX[compare2];
+									var pointNY = parentChainY[compare2];
+									var diffX = parentChainX[carbonNum] - centerpoint[0];
+									var diffY = centerpoint[1] - parentChainY[carbonNum];
+									//var inverseSlopey = -(poinNX-pointXTER)/(pointNY-pointY);
+									var newX = parentChainX[carbonNum];
+									var newY = parentChainY[carbonNum];
+									var angleOfImaginaryLine = Math.atan(Math.abs((centerpoint[1] - parentChainY[carbonNum])/(centerpoint[0]-parentChainX[carbonNum])));
+									//alert("carbonlist: " + carbonList);
+									var inSlope = -(pointNX - pointXTER)/(pointY - pointNY);
+									var isRight = 1;
+									var isDown = 1;
+									if (diffY>0)
+										isDown = -1;
+									else if (diffY<0)
+										isDown = 1;
+									if (diffX>0)
+										isRight = 1;
+									else if (diffX<0)
+										isRight = -1;
+									//DRAW TEH LINE PERPENDICULAR AND 36.06 LONG YAYS 
+									newX += isRight*Math.round(36.06*Math.cos(angleOfImaginaryLine));
+									newY += isDown*Math.round(36.06*Math.sin(angleOfImaginaryLine));
+									//newX += Math.round(36.06*Math.cos(90-angleOfImaginaryLine));
+									//newY += Math.round(36.06*Math.sin(90-angleOfImaginaryLine));
+									
+									if(carbonList.length==2)
+									{
+										//DRAW TEH OTHER LINE
+										//alert("carbonlist = 2");
+										//alert("mettthhhyyyllll try 2222");
+										var newX1 = 0;
+										var newY1 = 0;
+										var currentValsList = segmentDirection(parentChainX[carbonNum], parentChainY[carbonNum], newX, newY, true, (5*Math.PI/6));
+										var goingDown = currentValsList[0];
+										var goingRight = currentValsList[1];
+										var newangle = currentValsList[2];
+										//alert(currentValsList + "yayyy");
+										newX1 = parentChainX[carbonNum] + goingRight*Math.round(36.06*(Math.cos(newangle)));
+										newY1 = parentChainY[carbonNum] + goingDown*Math.round(36.06*(Math.sin(newangle)));
+										ctx.moveTo(parentChainX[carbonNum],parentChainY[carbonNum]);
+										ctx.lineTo(newX1, newY1);
+										ctx.stroke();
+										//alert("33333");
+										drawFragments(carbonNum, carbonList[0], parentChainX[carbonNum], parentChainY[carbonNum], newX1, newY1);
+										currentValsList = segmentDirection(newX, newY, parentChainX[carbonNum], parentChainY[carbonNum], false, 5*Math.PI/6);
+										//alert(currentValsList + "yayyy");
+										goingDown = currentValsList[0];
+										goingRight = currentValsList[1];
+										newangle = currentValsList[2];
+										//alert("4444444");
+										newX1 = parentChainX[carbonNum] - goingRight*Math.round(36.06*(Math.cos(newangle)));
+										newY1 = parentChainY[carbonNum] - goingDown*Math.round(36.06*(Math.sin(newangle)));
+										ctx.moveTo(parentChainX[carbonNum],parentChainY[carbonNum]);
+										ctx.lineTo(newX1, newY1);
+										ctx.stroke();
+										//alert("mettthhhhhyyyy strokeeee");
+										drawFragments(carbonNum, carbonList[1], parentChainX[carbonNum], parentChainY[carbonNum], newX1, newY1);
+									}
+									else if(carbonList.length==1){
+										//alert("methylllllll try 1");
+										ctx.moveTo(parentChainX[carbonNum],parentChainY[carbonNum]);
+										ctx.lineTo(newX,newY);
+										ctx.stroke();
+										//alert("mettthhhhyyyyy stroke");
+										drawFragments(carbonNum, carbonList[0], parentChainX[carbonNum], parentChainY[carbonNum], newX, newY);
+									}
+								}
+								
 								</script>
 								<section>
 									<p> does this replace photos though. YESH. </p>
