@@ -68,7 +68,7 @@
 								var nameList = ["meth", "eth", "prop", "but", "pent", "hex", "hept", "oct", "non", "dec", "undec", "dodec", "tridec", "tetradec", "pentadec"];
 								var number = ["0","1","2","3","4","5","6","7","8","9"];
 								var centerpoint = [];
-								var fancysubs = ["bromo","chloro","iodo"];
+								var fancysubs = ["bromo","chloro","iodo","panic4","panic5","panic6","panic7","panic8","panic9","panic10","panic11","panic12","panic13","panic14","panic15"];
 								var fancysymbols = ["Br","Cl","I"];
 								
 								function parseParentChain(){//returns the number of carbons in the parent chain
@@ -91,14 +91,29 @@
 											if(compound.charAt(q)==String(i)){
 												var tempString = compound.substring(q,compound.length);
 												var permaString = tempString.substring(0,tempString.indexOf("yl"));
-												var permaStringSub = tempString.substring(0,tempString.indexOf("o-"));
-												alert(permaString);
-												alert(permaStingSub);
+												var permaStringSub = "";
+												if(tempString.includes("o-")){
+													alert("-OOOOOOOO-");
+													if(tempString.includes("yl")){
+														if(tempString.indexOf("o-") < tempString.indexOf("yl")){
+														alert("if");
+															permaString = tempString.substring(0,tempString.indexOf("o-")); 
+													}
+													else {
+														alert("else");
+														permaString = tempString.substring(0,tempString.indexOf("o-")); 
+													}
+												}
+												}
+												alert("yo: " + permaString);
 												for(var d = 0; d<nameList.length; d++){
-													if(permaString.includes(nameList[d]) || permaStringSub.AAAHHHHHHHHHH){
+													if(permaString.includes(nameList[d])){
 														if(d==1 && permaString.includes("meth"))
 															continue;
 														carbonList.push(d + 1);
+													if(permaString.includes(fancysubs[d])){
+														carbonList.push(1);
+													}
 													}
 												}
 											}
