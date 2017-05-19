@@ -34,7 +34,7 @@
 							<article id="me" class="panel">
 								<header>
 									<h1>Chemistry Rules</h1>
-									<p>Subtext file explanation here instructions yay!</p>
+									<p>This program can take a variety of organic compounds and draw them. Current limitations include the inability to draw bicyclos, substituents with double or triple bonds, and any stereochemistry. </p>
 								</header>
 								<a href="#work" class="jumplink pic">
 									<span class="arrow icon fa-chevron-right"><span>run the code</span></span>
@@ -68,7 +68,7 @@
 								var nameList = ["meth", "eth", "prop", "but", "pent", "hex", "hept", "oct", "non", "dec", "undec", "dodec", "tridec", "tetradec", "pentadec"];
 								var number = ["0","1","2","3","4","5","6","7","8","9"];
 								var centerpoint = [];
-								var fancysubs = ["bromo","chloro","iodo","panic4","panic5","panic6","panic7","panic8","panic9","panic10","panic11","panic12","panic13","panic14","panic15"];
+								var fancysubs = ["brom","chlor","iod","panic4","panic5","panic6","panic7","panic8","panic9","panic10","panic11","panic12","panic13","panic14","panic15"];
 								var fancysymbols = ["Br","Cl","I"];
 								
 								function parseParentChain(){//returns the number of carbons in the parent chain
@@ -87,58 +87,51 @@
 									var sublen = 0;
 									for(var i = 1; i<=parentChain; i++){
 										carbonList =[];
+										var fancySubList = [];
 										for(var q = 0; q<compound.length; q++){
 											if(compound.charAt(q)==String(i)){
 												var tempString = compound.substring(q,compound.length);
-												var permaString = tempString.substring(0,tempString.indexOf("yl"));
+												var permaString = "";
+												if(tempString.includes("yl")){ ///////////BASE CASE METHYL OR SUCH
+													permaString = tempString.substring(0,tempString.indexOf("yl"));
+												}
 												var permaStringSub = "";
-												if(tempString.includes("o-")){
+												if(tempString.includes("o-")&& tempString.includes("yl")){ /////////FOR WHEN O- AND YL ARE THERE
 													alert("-OOOOOOOO-");
-													if(tempString.includes("yl")){
-														if(tempString.indexOf("o-") < tempString.indexOf("yl")){
-														alert("if");
-															permaString = tempString.substring(0,tempString.indexOf("o-")); 
-													}
-													else {
-														alert("else");
+													if(tempString.indexOf("o-") < tempString.indexOf("yl")){ ///// TRIMS OUT YL IF O- IS FIRST LIKE IN BROMO-2-METHYL
+														alert("O- comes before yl!!!");
 														permaString = tempString.substring(0,tempString.indexOf("o-")); 
 													}
 												}
+												else if(tempString.includes("o-")){ //////////// HAS NO YL SUBSTITUENTS BUT HAS A BROMO
+														permaString = tempString.substring(0,tempString.indexOf("o-"));
+														alert("has no yl but contains a bromo");
 												}
+												else{
+														alert("nothing worked for the yl bromo check");
+												}
+												
 												alert("yo: " + permaString);
 												for(var d = 0; d<nameList.length; d++){
 													if(permaString.includes(nameList[d])){
 														if(d==1 && permaString.includes("meth"))
 															continue;
 														carbonList.push(d + 1);
+													}
 													if(permaString.includes(fancysubs[d])){
 														carbonList.push(1);
+														alert("fancy sub carbon list");
+														fancySubList.push(fancysymbols[d]); //Cl Br I
 													}
-													}
+				
 												}
 											}
 										}
-										alert("carbon list: " + carbonList);
-										drawSubstituent(i,carbonList, ctx);
+										alert("!!!carbon list: " + carbonList);
+										alert("The FancySubList Says: " + fancySubList + ".....");
+										drawSubstituent(i,carbonList,fancySubList);
 									}
 									return carbonNum;
-								}
-								
-								function parsePostScript(){
-									var num = 0;
-									if (compound.includes("yne") || compound.includes("ene")){
-										var compy = compound.substring(0,compound.lastIndexOf("-"));
-										var compy2 = compy.substring(compy.lastIndexOf("-")+1,compy.length);
-										//alert("compy and compy2: " + compy + ", " + compy2);
-										num = parseInt(compy2); //parseInt
-									}
-									if(compound.includes("yne")){
-										drawYne(num,ctx);
-									}
-									else if(compound.includes("ene")){
-										drawEne(num,ctx);
-									} 
-									//looking to see if yne ore ene is present so we can check for dashes and numbers in between them  
 								}
 
 								function drawEne(){
@@ -247,67 +240,113 @@
 									for(var i = 0; i<listyNum.length; i++){
 										listyNum[i] = parseInt(listyNum[i]);
 									}
-									alert(listyNum);
-									var num = listyNum[0];
+									alert("yoooooooo" + listyNum);
+									//var num = listyNum[0];
 									//alert("DRAWYNE");
 									//alert("unfinished LOL SORRY");
 									parentChainX.push(nexx);
 									parentChainY.push(nexy);
 									var numbster = 1;
-									for(var i = 1; i<(num - 1); i++){
-											if(i%2==1){
-												ctx.lineTo(nexx+30, nexy-30)
-												nexy = nexy-30;
-												nexx = nexx+30;
-												}
-											else{
-												ctx.lineTo(nexx+30, nexy+30);
-												nexy = nexy+30;
-												nexx = nexx+30;
-												}
+									for(var i = 1; i<(listyNum[0] - 1); i++){//draw normally
+										if(i%2==1){
+											ctx.lineTo(nexx+30, nexy-30)
+											nexy = nexy-30;
+											nexx = nexx+30;
+											}
+										else{
+											ctx.lineTo(nexx+30, nexy+30);
+											nexy = nexy+30;
+											nexx = nexx+30;
+											}
+										parentChainX.push(nexx);
+										parentChainY.push(nexy);
+										ctx.stroke();
+									}
+									for(var b = 0; b<listyNum.length-1; b++){
+										alert("dancing bears painted wings things i almost remember");
+										nexx += 42;
+										ctx.lineTo(nexx,nexy);
+										ctx.stroke();
+										parentChainX.push(nexx);
+										parentChainY.push(nexy);
+										nexx+=42;
+										ctx.lineTo(nexx,nexy);
+										ctx.stroke();
+										parentChainX.push(nexx);
+										parentChainY.push(nexy);
+										var spotX = parentChainX[listyNum[b]]+3;
+										var spotY = parentChainY[listyNum[b]];
+										ctx.moveTo(spotX,spotY-4);
+										ctx.lineTo(spotX+36,spotY-4);
+										//ctx.fillText(100,100,"heyyyy what color is this?");
+										ctx.stroke();
+										ctx.moveTo(spotX,spotY+4);
+										ctx.lineTo(spotX+36,spotY+4);
+										ctx.stroke();
+										alert("spotX: " + spotX + ", spotY: " + spotY);
+										ctx.moveTo(nexx,nexy);
+										if(listyNum[b+1]-listyNum[b]!=2){//draw that third line!
+											nexx+=42;
+											ctx.lineTo(nexx,nexy);
+											ctx.stroke();
 											parentChainX.push(nexx);
 											parentChainY.push(nexy);
-											ctx.stroke();
 										}
-										if((num+2)<(nummy)){ //if enough space to draw the entire flat part
-											for(var t=1;t<4;t++){ //runs 3 times
-												nexx+=42;
-												ctx.lineTo(nexx,nexy);
-												ctx.stroke();
-												parentChainX.push(nexx);
-												parentChainY.push(nexy);
+										for(var c = listyNum[b]+2; c < listyNum[b+1]-1;c++){//draw normally
+											if(c%2==1){
+											ctx.lineTo(nexx+30, nexy-30)
+											nexy = nexy-30;
+											nexx = nexx+30;
 											}
+										else{
+											ctx.lineTo(nexx+30, nexy+30);
+											nexy = nexy+30;
+											nexx = nexx+30;
+											}
+										parentChainX.push(nexx);
+										parentChainY.push(nexy);
+										ctx.stroke();
 										}
-										else {
-										var diff= nummy-(num-1);
+									}
+									if((listyNum[listyNum.length-1]+2)<(nummy)){ //if enough space to draw the entire flat part
+										for(var t=1;t<4;t++){ //runs 3 times
+											nexx+=42;
+											ctx.lineTo(nexx,nexy);
+											ctx.stroke();
+											parentChainX.push(nexx);
+											parentChainY.push(nexy);
+										}
+									}
+									else {
+										var diff= nummy-(listyNum[listyNum.length-1]-1);
 										for (var w =0; w<diff; w++){
 											nexx+=42;
 											ctx.lineTo(nexx,nexy);
 											ctx.stroke();
 											parentChainX.push(nexx);
 											parentChainY.push(nexy);
-											ctx.fillText(nexx + " " + nexy, 200, 100 +10*w);
+											//ctx.fillText(nexx + " " + nexy, 200, 100 +10*w);
 										}
+									}
+									for (var j=(listyNum[listyNum.length-1]+2); j<nummy; j++){
+										if(j%2==1){
+											ctx.lineTo(nexx+30, nexy-30)
+											nexy = nexy-30;
+											nexx = nexx+30;
 										}
-										for (var j=(num+2); j<nummy; j++){
-											if(j%2==1){
-													ctx.lineTo(nexx+30, nexy-30)
-													nexy = nexy-30;
-													nexx = nexx+30;
-													}
-												else{
-													ctx.lineTo(nexx+30, nexy+30);
-													nexy = nexy+30;
-													nexx = nexx+30;
-													}
-												parentChainX.push(nexx);
-												parentChainY.push(nexy);
-												ctx.stroke();
+										else{
+											ctx.lineTo(nexx+30, nexy+30);
+											nexy = nexy+30;
+											nexx = nexx+30;
 										}
+										parentChainX.push(nexx);
+										parentChainY.push(nexy);
+										ctx.stroke();
+									}
 										
 										//alert("should we cry here or somewhere else?");
-										var spotX = parentChainX[num]+3;
-										var spotY = parentChainY[num];
+										var spotX = parentChainX[listyNum[listyNum.length-1]]+3;
+										var spotY = parentChainY[listyNum[listyNum.length-1]];
 										ctx.moveTo(spotX,spotY-4);
 										ctx.lineTo(spotX+36,spotY-4);
 										//ctx.fillText(100,100,"heyyyy what color is this?");
@@ -388,25 +427,16 @@
 										ctx.stroke();
 									}
 									centerpoint = findCenter();
-									//alert("hey hey hey");
-									//alert(parentChainX);
-									//alert(parentChainY);
-									drawEne(); //note - one way or another we will probably move this to before parent chain is drawn bc of drawYne
-									//alternatively, we could always get rid of parsePostScript and just call drawYne first and drawEne after (and add checks 
-									//to those methods
+									drawEne(); 
 									parseSubstituents();
 									ctx.stroke();
 								}
 								
 								function whereIsCarbon(carbonNum) { //tells you the coordinates of the specified carbon
-									//should we delete this method? now that we already have a list with the components,
-									//whereIsCarbon(num)[0] can be replaced with parentChainX[num]
-									//whereIsCarbon(num)[1] can be replaced with parentChainY[num]
-									//(we'd have to change a couple things in drawEne but other than that we'd be gucci
 									return [parentChainX[carbonNum], parentChainY[carbonNum]];
 								}
 								
-								function drawSubstituent(i, carbonList){ //calls drawFragments once or twice and then calls drawFragments
+								function drawSubstituent(i, carbonList, fancySubList){ //calls drawFragments once or twice and then calls drawFragments
 									ctx.fillStyle = "#000000";
 									var listy = whereIsCarbon(i);
 									var xCo = listy[0];
@@ -425,7 +455,12 @@
 											ctx.moveTo(xstart, ystart);
 											ctx.lineTo(xCo,yCo);
 											ctx.stroke();
+											if(carbonList[0]==1){
+												alert("dont call draw fragments check to see if fancySubList has anything in it");
+											}
+											else {
 											drawFragments(i, carbonList[0], xstart, ystart, xCo, yCo);
+											}
 										}
 										else if(carbonList.length==2){ //we have two sprouts! :D
 											var xCo1 = xCo - 20;
